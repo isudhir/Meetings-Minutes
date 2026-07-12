@@ -64,9 +64,12 @@ export function minutesToHtml(m: Minutes): string {
 
   return `
     <style>
-      body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color: #0f172a; max-width: 720px; margin: 40px auto; padding: 0 24px; }
-      h1 { margin-bottom: 4px; } h2 { margin-top: 28px; color: #4338ca; }
-      .meta { color: #475569; font-size: 14px; }
+      body { font-family: "Plus Jakarta Sans", -apple-system, Segoe UI, Roboto, sans-serif; color: #1A1917; max-width: 700px; margin: 48px auto; padding: 0 24px; line-height: 1.6; }
+      h1 { font-family: Georgia, "Times New Roman", serif; font-size: 30px; margin: 0 0 6px; letter-spacing: -0.01em; }
+      h2 { font-family: Georgia, "Times New Roman", serif; font-size: 18px; margin: 30px 0 8px; padding-top: 20px; border-top: 1px solid #DEDCD5; }
+      ul { padding-left: 20px; } li { margin: 4px 0; }
+      .meta { color: #6E6B63; font-size: 14px; border-bottom: 2px solid #0E9366; display: inline-block; padding-bottom: 8px; }
+      em { color: #9A968D; }
     </style>
     <h1>${esc(m.title)}</h1>
     <p class="meta">

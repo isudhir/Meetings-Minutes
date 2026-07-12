@@ -48,13 +48,13 @@ function ChevronIcon() {
 function Section({ title, items }: { title: string; items: string[] }) {
   if (!items.length) return null
   return (
-    <div className="card p-6">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
-      <ul className="mt-3 space-y-2">
+    <div>
+      <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-white">{title}</h3>
+      <ul className="mt-3 space-y-2.5">
         {items.map((i, idx) => (
-          <li key={idx} className="flex gap-3 text-slate-700 dark:text-slate-300">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" />
-            <span>{i}</span>
+          <li key={idx} className="flex gap-3 text-ink-700 dark:text-ink-300">
+            <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" />
+            <span className="leading-relaxed">{i}</span>
           </li>
         ))}
       </ul>
@@ -63,15 +63,15 @@ function Section({ title, items }: { title: string; items: string[] }) {
 }
 
 const sentimentStyles: Record<string, string> = {
-  positive: 'bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/20',
-  neutral: 'bg-slate-100 text-slate-700 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10',
+  positive: 'bg-accent-50 text-accent-700 ring-accent-200 dark:bg-accent-500/10 dark:text-accent-300 dark:ring-accent-400/20',
+  neutral: 'bg-ink-100 text-ink-600 ring-ink-200 dark:bg-white/[0.06] dark:text-ink-300 dark:ring-white/10',
   negative: 'bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/20',
   mixed: 'bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/20',
 }
 
 const sentimentDot: Record<string, string> = {
-  positive: 'bg-emerald-500',
-  neutral: 'bg-slate-500',
+  positive: 'bg-accent-500',
+  neutral: 'bg-ink-400',
   negative: 'bg-rose-500',
   mixed: 'bg-amber-500',
 }
@@ -91,80 +91,101 @@ export default function Results({ data, onReset }: { data: AnalyzeResponse; onRe
     }
   }
 
+  const meta = [m.date, m.location, m.attendees.length ? `${m.attendees.length} attendees` : null]
+    .filter(Boolean)
+    .join(' · ')
+
+  const sentiment = sentimentStyles[m.sentiment.overall] ?? sentimentStyles.neutral
+  const dot = sentimentDot[m.sentiment.overall] ?? sentimentDot.neutral
+
   return (
     <div className="animate-fade-up space-y-6">
       {/* Header + export bar */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-ink-200 pb-6 dark:border-white/10">
         <div>
-          <h2 className="font-display text-2xl font-semibold text-slate-900 dark:text-white">{m.title}</h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {[m.date, m.location, m.attendees.length ? `${m.attendees.length} attendees` : null]
-              .filter(Boolean)
-              .join(' · ')}
-          </p>
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl dark:text-white">
+            {m.title}
+          </h2>
+          {meta && <p className="mt-1.5 text-sm text-ink-500 dark:text-ink-400">{meta}</p>}
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={handleCopy} className="btn-secondary">
             <CopyIcon />
-            {copyStatus === 'copied' ? 'Copied!' : copyStatus === 'error' ? 'Copy failed' : 'Copy Markdown'}
+            {copyStatus === 'copied' ? 'Copied' : copyStatus === 'error' ? 'Copy failed' : 'Copy'}
           </button>
           <button onClick={() => downloadMarkdown(m)} className="btn-secondary">
             <MarkdownIcon />
-            Download .md
+            .md
           </button>
           <button onClick={() => downloadPdf(m)} className="btn-secondary">
             <PdfIcon />
-            Download PDF
+            PDF
           </button>
           <button onClick={onReset} className="btn-primary">
             <RefreshIcon />
-            New analysis
+            New
           </button>
         </div>
       </div>
 
-      {/* Insights row */}
-      <div className="flex flex-wrap items-center gap-3">
-        <span className={`chip ${sentimentStyles[m.sentiment.overall] ?? sentimentStyles.neutral}`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${sentimentDot[m.sentiment.overall] ?? sentimentDot.neutral}`} />
-          Sentiment: {m.sentiment.overall}
+      {/* Insights */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`chip ${sentiment}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+          {m.sentiment.overall}
         </span>
         {m.topics.map((t, idx) => (
-          <span key={`${t}-${idx}`} className="chip-brand">
+          <span key={`${t}-${idx}`} className="chip-outline">
             {t}
           </span>
         ))}
       </div>
 
-      {/* Attendees */}
-      {m.attendees.length > 0 && (
-        <div className="card p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Attendees</h3>
-          <p className="mt-2 text-slate-700 dark:text-slate-300">{m.attendees.join(', ')}</p>
-        </div>
-      )}
+      {/* The minutes, as one document */}
+      <div className="card divide-y divide-ink-200 dark:divide-white/10">
+        {m.attendees.length > 0 && (
+          <div className="p-6">
+            <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-white">Attendees</h3>
+            <p className="mt-2 text-ink-700 dark:text-ink-300">{m.attendees.join(', ')}</p>
+          </div>
+        )}
+        {m.summary && (
+          <div className="p-6">
+            <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-white">Summary</h3>
+            <p className="mt-2 whitespace-pre-line leading-relaxed text-ink-700 dark:text-ink-300">{m.summary}</p>
+          </div>
+        )}
+        {m.discussion_points.length > 0 && (
+          <div className="p-6">
+            <Section title="Discussion points" items={m.discussion_points} />
+          </div>
+        )}
+        {m.key_decisions.length > 0 && (
+          <div className="p-6">
+            <Section title="Key decisions" items={m.key_decisions} />
+          </div>
+        )}
+        {m.takeaways.length > 0 && (
+          <div className="p-6">
+            <Section title="Takeaways" items={m.takeaways} />
+          </div>
+        )}
+      </div>
 
-      {/* Summary */}
-      {m.summary && (
-        <div className="card p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Summary</h3>
-          <p className="mt-2 whitespace-pre-line text-slate-700 dark:text-slate-300">{m.summary}</p>
-        </div>
-      )}
-
-      <Section title="Discussion Points" items={m.discussion_points} />
-      <Section title="Key Decisions" items={m.key_decisions} />
-      <Section title="Takeaways" items={m.takeaways} />
-
-      {/* Action items */}
+      {/* Action items — as a checklist */}
       {m.action_items.length > 0 && (
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Action Items</h3>
-          <ul className="mt-3 space-y-2.5">
+          <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-white">Action items</h3>
+          <ul className="mt-4 space-y-3">
             {m.action_items.map((a, idx) => (
-              <li key={idx} className="flex flex-wrap items-center gap-3">
-                <span className="chip bg-brand-600 text-white ring-brand-600 dark:bg-brand-500 dark:ring-brand-500">{a.owner}</span>
-                <span className="text-slate-700 dark:text-slate-300">{a.task}</span>
+              <li key={idx} className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border border-accent-300 text-accent-600 dark:border-accent-400/40 dark:text-accent-400">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                </span>
+                <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="font-semibold text-ink-900 dark:text-white">{a.owner}</span>
+                  <span className="text-ink-700 dark:text-ink-300">{a.task}</span>
+                </span>
               </li>
             ))}
           </ul>
@@ -173,11 +194,11 @@ export default function Results({ data, onReset }: { data: AnalyzeResponse; onRe
 
       {/* Transcript */}
       <details className="card group p-6">
-        <summary className="flex cursor-pointer list-none items-center justify-between text-lg font-semibold text-slate-900 [&::-webkit-details-marker]:hidden dark:text-white">
+        <summary className="flex cursor-pointer list-none items-center justify-between font-display text-lg font-semibold text-ink-900 [&::-webkit-details-marker]:hidden dark:text-white">
           Full transcript
           <ChevronIcon />
         </summary>
-        <p className="mt-3 whitespace-pre-line text-sm text-slate-600 dark:text-slate-400">{data.transcript}</p>
+        <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink-600 dark:text-ink-400">{data.transcript}</p>
       </details>
     </div>
   )

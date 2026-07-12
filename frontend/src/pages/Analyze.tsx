@@ -43,12 +43,15 @@ export default function Analyze() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
+    <div className="mx-auto max-w-3xl px-6 py-14">
       {status !== 'done' && (
         <>
-          <h1 className="font-display text-3xl font-semibold text-slate-900 dark:text-white">Analyze a recording</h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            Upload your meeting audio and get minutes in under a minute.
+          <p className="eyebrow">New minutes</p>
+          <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl dark:text-white">
+            Analyze a recording
+          </h1>
+          <p className="mt-3 text-ink-600 dark:text-ink-400">
+            Upload your meeting audio and get minutes back in under a minute.
           </p>
           <div className="mt-8">
             <UploadZone onSelect={handleSelect} disabled={status === 'working'} />
@@ -57,24 +60,24 @@ export default function Analyze() {
       )}
 
       {status === 'working' && (
-        <div className="mt-8 overflow-hidden rounded-xl border border-brand-200 bg-brand-50 p-5 text-brand-900 dark:border-brand-400/20 dark:bg-brand-500/10 dark:text-brand-200">
-          <div className="flex items-center gap-3">
-            <span className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
-            <span>
-              Transcribing &amp; analyzing <strong>{fileName}</strong>&hellip; this can take up to a minute.
+        <div className="mt-6 rounded-xl border border-ink-200 bg-white p-5 dark:border-white/10 dark:bg-white/[0.03]">
+          <div className="flex items-center gap-3 text-ink-800 dark:text-ink-100">
+            <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-accent-500 border-t-transparent" />
+            <span className="text-sm">
+              Transcribing and summarizing <strong className="font-semibold">{fileName}</strong> — this can take up to a minute.
             </span>
           </div>
-          <div className="relative mt-4 h-1.5 w-full overflow-hidden rounded-full bg-brand-200/70 dark:bg-white/10">
-            <span className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-brand-500 dark:bg-brand-400 animate-shimmer" />
+          <div className="relative mt-4 h-1 w-full overflow-hidden rounded-full bg-ink-100 dark:bg-white/10">
+            <span className="absolute inset-y-0 left-0 w-1/3 animate-shimmer rounded-full bg-accent-500" />
           </div>
         </div>
       )}
 
       {status === 'error' && (
-        <div className="mt-8 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-5 text-rose-800 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-300">
+        <div className="mt-6 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-5 text-rose-800 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-300">
           <WarningIcon />
           <div>
-            <p className="font-medium">Analysis failed</p>
+            <p className="font-semibold">That didn't work</p>
             <p className="mt-1 text-sm">{error}</p>
           </div>
         </div>

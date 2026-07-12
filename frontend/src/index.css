@@ -8,15 +8,17 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-200 dark:bg-[#0B0A18] dark:text-slate-100;
+    @apply bg-paper text-ink-900 antialiased transition-colors duration-200 dark:bg-ink-950 dark:text-ink-50;
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
+  }
+
+  /* Fraunces looks best with its optical-size axis engaged for headings. */
+  .font-display {
+    font-optical-sizing: auto;
   }
 
   ::selection {
-    @apply bg-brand-200 text-brand-900;
-  }
-
-  :focus-visible {
-    @apply outline-none;
+    @apply bg-accent-200 text-accent-900;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -32,36 +34,43 @@
 }
 
 @layer components {
-  /* Surfaces */
+  /* Surface — flat with a hairline, not a floaty shadowed bubble. */
   .card {
-    @apply rounded-2xl border border-slate-200 bg-white shadow-soft transition-colors duration-200 dark:border-white/10 dark:bg-slate-900/60;
+    @apply rounded-xl border border-ink-200 bg-white shadow-card transition-colors duration-200 dark:border-white/10 dark:bg-white/[0.03];
   }
 
-  /* Buttons */
+  /* Small uppercase label that sets up a heading. */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-accent-700 dark:text-accent-400;
+  }
+
+  /* Buttons — near-black primary (inverts in dark), hairline secondary. */
   .btn {
-    @apply inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-[#0B0A18];
+    @apply inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-ink-950;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-500 hover:shadow-glow active:bg-brand-700;
+    @apply btn bg-ink-900 text-white shadow-soft hover:bg-ink-800 dark:bg-white dark:text-ink-950 dark:hover:bg-ink-100;
   }
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 active:bg-brand-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-brand-400/40 dark:hover:bg-white/10 dark:hover:text-white;
+    @apply btn border border-ink-200 bg-white text-ink-800 hover:border-ink-300 hover:bg-ink-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-ink-100 dark:hover:bg-white/[0.08];
   }
   .btn-ghost {
-    @apply btn text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white;
+    @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-900 dark:text-ink-300 dark:hover:bg-white/[0.06] dark:hover:text-white;
   }
 
-  /* Badges / chips */
+  /* Chips */
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset;
   }
-  .chip-brand {
-    @apply chip bg-brand-50 text-brand-700 ring-brand-200 dark:bg-brand-500/10 dark:text-brand-300 dark:ring-brand-400/20;
+  .chip-outline {
+    @apply chip bg-transparent text-ink-600 ring-ink-200 dark:text-ink-300 dark:ring-white/15;
+  }
+  .chip-accent {
+    @apply chip bg-accent-50 text-accent-700 ring-accent-200 dark:bg-accent-500/10 dark:text-accent-300 dark:ring-accent-400/20;
   }
 
-  /* Inputs / focusable containers */
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-[#0B0A18];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper dark:focus-visible:ring-offset-ink-950;
   }
 }
 
@@ -69,8 +78,12 @@
   .text-balance {
     text-wrap: balance;
   }
-  .bg-grid {
-    background-image: radial-gradient(circle at 1px 1px, rgb(100 116 139 / 0.15) 1px, transparent 0);
-    background-size: 24px 24px;
+  /* Faint dotted grid, used sparingly behind the hero. */
+  .bg-dotgrid {
+    background-image: radial-gradient(circle at 1px 1px, rgb(26 25 23 / 0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .dark .bg-dotgrid {
+    background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.05) 1px, transparent 0);
   }
 }
