@@ -13,16 +13,28 @@ Transcript:
 {transcript}
 """
 
+GENERAL_SYSTEM_PROMPT = """You are a friendly, concise assistant inside "Minutes", a web app that turns
+meeting recordings into structured minutes. Answer the user's questions helpfully and directly.
+If they ask about the app, explain that they can upload a recording (mp3, wav, m4a, mp4 or webm)
+and get back a summary, discussion points, key decisions, action items with owners, and sentiment —
+and that once minutes are on screen they can ask follow-up questions grounded in that transcript.
+Keep answers concise."""
+
 
 def answer_question(transcript: str, messages: list[ChatMessage]) -> str:
-    """Answer the latest user question, grounded in the meeting transcript."""
+    """Answer the latest user question. Grounded in the meeting transcript when
+    one is provided; otherwise a general-purpose assistant."""
     client, model = get_chat_client()
 
     transcript = transcript.strip()
-    if len(transcript) > MAX_TRANSCRIPT_CHARS:
-        transcript = transcript[:MAX_TRANSCRIPT_CHARS] + "\n[transcript truncated]"
+    if transcript:
+        if len(transcript) > MAX_TRANSCRIPT_CHARS:
+            transcript = transcript[:MAX_TRANSCRIPT_CHARS] + "\n[transcript truncated]"
+        system = SYSTEM_PROMPT.format(transcript=transcript)
+    else:
+        system = GENERAL_SYSTEM_PROMPT
 
-    convo = [{"role": "system", "content": SYSTEM_PROMPT.format(transcript=transcript)}]
+    convo = [{"role": "system", "content": system}]
     convo += [{"role": m.role, "content": m.content} for m in messages]
 
     completion = client.chat.completions.create(model=model, messages=convo)

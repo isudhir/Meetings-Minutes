@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UploadZone from '../components/UploadZone'
 import Results from '../components/Results'
 import { analyzeRecording } from '../lib/api'
+import { useChatContext } from '../lib/chatContext'
 import type { AnalyzeResponse } from '../types'
 
 type Status = 'idle' | 'working' | 'done' | 'error'
@@ -20,6 +21,11 @@ export default function Analyze() {
   const [fileName, setFileName] = useState('')
   const [error, setError] = useState('')
   const [result, setResult] = useState<AnalyzeResponse | null>(null)
+  const { setTranscript } = useChatContext()
+
+  // Leaving this screen drops the meeting context, so chat falls back to the
+  // general assistant elsewhere.
+  useEffect(() => () => setTranscript(null), [setTranscript])
 
   async function handleSelect(file: File) {
     setFileName(file.name)
@@ -29,6 +35,9 @@ export default function Analyze() {
       const data = await analyzeRecording(file)
       setResult(data)
       setStatus('done')
+      // Hand the transcript to the chat launcher so it switches to the
+      // meeting-grounded agent for this recording.
+      if (data.chat_available) setTranscript(data.transcript)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.')
       setStatus('error')
@@ -40,6 +49,7 @@ export default function Analyze() {
     setResult(null)
     setError('')
     setFileName('')
+    setTranscript(null)
   }
 
   return (

@@ -25,6 +25,17 @@ export async function analyzeRecording(file: File): Promise<AnalyzeResponse> {
   return res.json()
 }
 
+export async function fetchChatAvailable(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/config')
+    if (!res.ok) return false
+    const body = await res.json()
+    return Boolean(body.chat_available)
+  } catch {
+    return false
+  }
+}
+
 export async function sendChatMessage(
   transcript: string,
   messages: ChatMessage[],

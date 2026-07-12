@@ -51,6 +51,13 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/api/config")
+def config() -> dict:
+    """Client-visible server capabilities, fetched before any upload so the UI
+    knows whether the chat assistant can be offered."""
+    return {"chat_available": chat_available()}
+
+
 @app.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze_endpoint(
     request: Request, file: UploadFile = File(...)
@@ -119,8 +126,7 @@ async def chat_endpoint(req: ChatRequest) -> ChatResponse:
         raise HTTPException(
             status_code=400, detail="Chat isn't configured on this server."
         )
-    if not req.transcript.strip():
-        raise HTTPException(status_code=400, detail="No transcript to reference.")
+    # An empty transcript is allowed: chat then runs as a general assistant.
     if not req.messages or req.messages[-1].role != "user":
         raise HTTPException(
             status_code=400, detail="The latest message must be from the user."

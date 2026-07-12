@@ -1,7 +1,6 @@
 import type { AnalyzeResponse } from '../types'
 import { copyMarkdown, downloadMarkdown, downloadPdf } from '../lib/export'
 import { useState } from 'react'
-import ChatPanel from './ChatPanel'
 
 function CopyIcon() {
   return (
@@ -201,9 +200,6 @@ export default function Results({ data, onReset }: { data: AnalyzeResponse; onRe
         </summary>
         <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink-600 dark:text-ink-400">{data.transcript}</p>
       </details>
-
-      {/* Follow-up chat, grounded in the transcript */}
-      {data.chat_available && <ChatPanel transcript={data.transcript} />}
     </div>
   )
 }

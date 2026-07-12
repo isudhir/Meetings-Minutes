@@ -40,9 +40,9 @@ const ShareIcon = () => (
     <path d="M4.5 13v6a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-6" />
   </svg>
 )
-const SwapIcon = () => (
+const ChatIcon = () => (
   <svg {...iconProps}>
-    <path d="M4 8h13l-3-3M20 16H7l3 3" />
+    <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5Z" />
   </svg>
 )
 
@@ -52,7 +52,7 @@ const features: { icon: ReactNode; title: string; desc: string }[] = [
   { icon: <CheckIcon />, title: 'Action items with owners', desc: 'Every commitment captured next to the person who owns it.' },
   { icon: <PulseIcon />, title: 'Sentiment & topics', desc: 'A quick read on how the room felt and what it kept coming back to.' },
   { icon: <ShareIcon />, title: 'Export anywhere', desc: 'Copy Markdown, download a .md file, or print a clean PDF for the team.' },
-  { icon: <SwapIcon />, title: 'Your choice of model', desc: 'Runs on OpenAI today; switch to OpenRouter with a single config change.' },
+  { icon: <ChatIcon />, title: 'Ask follow-up questions', desc: 'Chat with your minutes to dig into decisions, owners and anything the summary skipped.' },
 ]
 
 const steps = [
@@ -128,7 +128,8 @@ export default function Home() {
             </h1>
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink-600 [animation-delay:150ms] animate-fade-up dark:text-ink-300">
               Upload the audio from any meeting and get an organized summary, the decisions that were
-              made, and who owns what — ready to share before everyone's left the call.
+              made, and who owns what — then chat with the minutes to dig into anything you need,
+              ready to share before everyone's left the call.
             </p>
             <div className="mt-8 flex flex-col gap-3 [animation-delay:225ms] animate-fade-up sm:flex-row sm:items-center">
               <Link to="/app" className="btn-primary px-5 py-3 text-base">

@@ -40,7 +40,9 @@ class ChatMessage(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    transcript: str
+    # Optional: when empty, chat runs as a general assistant instead of being
+    # grounded in a specific meeting transcript.
+    transcript: str = ""
     messages: list[ChatMessage] = Field(default_factory=list)
 
 
