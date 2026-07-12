@@ -5,10 +5,11 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
+from openai import RateLimitError
 from starlette.concurrency import run_in_threadpool
 
 from .analyzer import analyze, transcribe
-from .chat import answer_question
+from .chat import answer_question, parse_retry_after
 from .config import settings
 from .llm import chat_available, missing_api_key
 from .ratelimit import check_and_reserve
@@ -140,6 +141,16 @@ async def chat_endpoint(req: ChatRequest) -> ChatResponse:
 
     try:
         reply = await run_in_threadpool(answer_question, req.transcript, req.messages)
+    except RateLimitError as exc:
+        # Backoff retries in answer_question didn't clear it — the chat model is
+        # still rate-limited. Tell the client to retry, with an accurate wait.
+        retry_after = parse_retry_after(exc) or 30
+        logger.warning("Chat rate-limited upstream; asking client to retry in %ss", retry_after)
+        raise HTTPException(
+            status_code=429,
+            detail="The chat model is busy right now. Please wait a few seconds and try again.",
+            headers={"Retry-After": str(retry_after)},
+        ) from exc
     except Exception as exc:  # noqa: BLE001 - do not leak internal details
         logger.exception("Chat failed")
         raise HTTPException(
