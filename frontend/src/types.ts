@@ -26,4 +26,10 @@ export interface AnalyzeResponse {
   transcript: string
   minutes: Minutes
   provider: string
+  chat_available: boolean
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
 }

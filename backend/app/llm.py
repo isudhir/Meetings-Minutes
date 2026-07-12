@@ -29,8 +29,27 @@ def get_transcription_client() -> tuple[OpenAI, str]:
     return _client_for_provider(), settings.transcription_model
 
 
+def get_chat_client() -> tuple[OpenAI, str]:
+    """Return (client, model) for meeting follow-up chat.
+
+    Always OpenRouter, regardless of LLM_PROVIDER — that's where the free chat
+    models live, so chat can run for free even when generation/transcription
+    are pointed at OpenAI.
+    """
+    client = OpenAI(
+        api_key=settings.openrouter_api_key or "missing",
+        base_url=OPENROUTER_BASE_URL,
+    )
+    return client, settings.chat_model
+
+
 def missing_api_key() -> str | None:
     """Name of the required API key that isn't set for the active provider, else None."""
     if settings.llm_provider == "openrouter":
         return None if settings.openrouter_api_key else "OPENROUTER_API_KEY"
     return None if settings.openai_api_key else "OPENAI_API_KEY"
+
+
+def chat_available() -> bool:
+    """Whether follow-up chat can run (needs an OpenRouter key)."""
+    return bool(settings.openrouter_api_key)

@@ -30,3 +30,19 @@ class AnalyzeResponse(BaseModel):
     transcript: str
     minutes: Minutes
     provider: str
+    # True when the server can answer follow-up questions (OpenRouter key set).
+    chat_available: bool = False
+
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class ChatRequest(BaseModel):
+    transcript: str
+    messages: list[ChatMessage] = Field(default_factory=list)
+
+
+class ChatResponse(BaseModel):
+    reply: str

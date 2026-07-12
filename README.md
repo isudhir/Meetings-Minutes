@@ -2,7 +2,8 @@
 
 Upload a meeting recording and get back clean, structured minutes — a summary,
 the decisions that were made, action items with owners, and a quick read on
-sentiment and topics. You can copy the result as Markdown or save it as a PDF.
+sentiment and topics. You can copy the result as Markdown or save it as a PDF,
+and ask follow-up questions in a chat that answers from the transcript.
 
 It's a single FastAPI service: the React frontend builds to static files that
 FastAPI serves alongside the `/api` routes, so the whole thing runs as one
@@ -62,6 +63,9 @@ Everything is set through environment variables. Copy `.env.example` to
 | `GENERATION_MODEL` | `gpt-4o-mini` | The chat model that writes the minutes. |
 | `TRANSCRIPTION_MODEL` | `gpt-4o-mini-transcribe` | The model that transcribes the audio. |
 | `MAX_UPLOAD_MB` | `25` | Upload size limit (OpenAI caps audio at 25 MB). |
+| `CHAT_MODEL` | `meta-llama/llama-3.3-70b-instruct:free` | Model for the follow-up chat. Always runs on OpenRouter (needs `OPENROUTER_API_KEY`), so it can use a free `:free` model even if generation runs on OpenAI. |
+| `RATE_LIMIT_UPLOADS` | `1` | Uploads allowed per window, per IP + browser. |
+| `RATE_LIMIT_WINDOW_SECONDS` | `600` | The window, in seconds. Set to `0` to turn the limit off. |
 
 The provider is just the OpenAI SDK pointed at a different base URL, so
 switching to OpenRouter is only a config change. To run the whole pipeline on
